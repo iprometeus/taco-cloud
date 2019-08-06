@@ -39,11 +39,14 @@ public class JdbcTacoRepository implements TacoRepository {
 
         taco.setCreatedAt(new Date());
 
+        PreparedStatementCreatorFactory preparedStatementCreatorFactory = new PreparedStatementCreatorFactory(
+                "insert into Taco (name, createdAt) values (?, ?)",
+                Types.VARCHAR, Types.TIMESTAMP
+        );
+        preparedStatementCreatorFactory.setReturnGeneratedKeys(true);
+
         PreparedStatementCreator psc =
-                new PreparedStatementCreatorFactory(
-                        "insert into Taco (name, createdAt) values (?, ?)",
-                        Types.VARCHAR, Types.TIMESTAMP
-                ).newPreparedStatementCreator(
+                preparedStatementCreatorFactory.newPreparedStatementCreator(
                         Arrays.asList(
                                 taco.getName(),
                                 new Timestamp(taco.getCreatedAt().getTime())));

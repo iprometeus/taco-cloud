@@ -39,11 +39,13 @@ public class DesignTacoController {
 
     @ModelAttribute(name = "order")
     public Order order() {
+
         return new Order();
     }
 
     @ModelAttribute(name = "taco")
     public Taco taco() {
+
         return new Taco();
     }
 
@@ -57,21 +59,22 @@ public class DesignTacoController {
         Type[] types = Type.values();
         for (Type type : types) {
             model.addAttribute(type.toString().toLowerCase(),
-                    filterByType(ingredients, type));
+                               filterByType(ingredients, type));
         }
-        model.addAttribute("design", new Taco());
 
         return "design";
     }
 
     @PostMapping
     public String processDesign(
-            @Valid Taco design, Errors errors,
-            @ModelAttribute Order order) {
+            Taco taco, Errors errors,
+            @ModelAttribute
+                    Order order) {
+
         if (errors.hasErrors()) {
             return "design";
         }
-        Taco saved = designRepo.save(design);
+        Taco saved = designRepo.save(taco);
         order.addDesign(saved);
         return "redirect:/orders/current";
     }
@@ -79,7 +82,7 @@ public class DesignTacoController {
     private List<Ingredient> filterByType(List<Ingredient> ingredients, Type type) {
 
         return ingredients.stream()
-                .filter(i -> type.equals(i.getType()))
-                .collect(Collectors.toList());
+                          .filter(i -> type.equals(i.getType()))
+                          .collect(Collectors.toList());
     }
 }
